@@ -1,3 +1,6 @@
 [submodule "sck_gateway"]
 	path = sck_gateway
 	url = https://github.com/SupplyChainKanban/sck_gateway.git
+[submodule "sck_data-ingestion_ms"]
+	path = sck_data-ingestion_ms
+	url = https://github.com/SupplyChainKanban/sck_data-ingestion_ms.git
