@@ -4,3 +4,6 @@
 [submodule "sck_data-ingestion_ms"]
 	path = sck_data-ingestion_ms
 	url = https://github.com/SupplyChainKanban/sck_data-ingestion_ms.git
+[submodule "sck_data_validation_ms"]
+	path = sck_data_validation_ms
+	url = https://github.com/SupplyChainKanban/sck_data_validation_ms.git
