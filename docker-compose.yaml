@@ -1,0 +1,55 @@
+version: "3"
+
+services:
+  nats-server:
+    image: nats:latest
+    ports:
+      # - 4222:4222
+      - 8222:8222
+      # - 6222:6222
+
+  sck_gateway:
+    build: ./sck_gateway
+    ports:
+      - ${SCK_GATEWAY_PORT}:3000
+    volumes:
+      - ./sck_gateway/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3000
+      - SCK_NATS_SERVERS=nats://nats-server:4222
+
+  sck_data_ingestion:
+    build: ./sck_data-ingestion_ms
+    volumes:
+      - ./sck_data-ingestion_ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3001
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=file:./dev.db
+
+  sck_data_validation:
+    depends_on:
+      - sck_data_validation_db
+    build: ./sck_data_validation_ms
+    volumes:
+      - ./sck_data_validation_ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3002
+      - DATABASE_URL=postgresql://postgres:123456@sck_data_validation_db:5432/dataValidationDB?schema=public
+      - SCK_NATS_SERVERS=nats://nats-server:4222
+
+  sck_data_validation_db:
+    container_name: data_validation_database
+    image: postgres:16.2
+    restart: always
+    volumes:
+      - ./sck_data_validation_ms/postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=dataValidationDB
