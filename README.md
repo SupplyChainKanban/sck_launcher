@@ -5,6 +5,12 @@
 3. Ejecutar el comando
 
 ```
+git submodule update --init --recursive
+```
+
+4. Ejecutar el comando
+
+```
     docker compose up --build
 ```
 
