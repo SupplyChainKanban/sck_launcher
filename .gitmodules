@@ -1,0 +1,3 @@
+[submodule "sck_gateway"]
+	path = sck_gateway
+	url = https://github.com/SupplyChainKanban/sck_gateway.git
