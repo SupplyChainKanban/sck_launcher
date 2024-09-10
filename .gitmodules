@@ -7,3 +7,6 @@
 [submodule "sck_data_validation_ms"]
 	path = sck_data_validation_ms
 	url = https://github.com/SupplyChainKanban/sck_data_validation_ms.git
+[submodule "sck_authorization_ms"]
+	path = sck_authorization_ms
+	url = https://github.com/SupplyChainKanban/sck_authorization_ms.git
