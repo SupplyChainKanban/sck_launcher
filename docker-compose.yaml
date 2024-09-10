@@ -8,6 +8,16 @@ services:
       - 8222:8222
       # - 6222:6222
 
+  sck_authorization:
+    build: ./sck_authorization_ms
+    volumes:
+      - ./sck_authorization_ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3003
+      - DATABASE_URL=postgresql://postgres:123456@nats-server:5432/dataValidationDB?schema=public
+      - SCK_NATS_SERVERS=nats://nats-server:4222
+
   sck_gateway:
     build: ./sck_gateway
     ports:
