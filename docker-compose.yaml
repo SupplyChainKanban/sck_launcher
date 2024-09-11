@@ -17,6 +17,7 @@ services:
       - PORT=3003
       - DATABASE_URL=postgresql://postgres:123456@nats-server:5432/dataValidationDB?schema=public
       - SCK_NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=${SCK_AUTH_DATABASE_URL}
 
   sck_gateway:
     build: ./sck_gateway
