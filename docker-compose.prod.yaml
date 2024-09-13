@@ -1,0 +1,67 @@
+version: "3"
+
+services:
+  nats-server:
+    image: nats:latest
+  #   ports:
+  ## - 4222:4222
+  # - 8222:8222
+  ## - 6222:6222
+
+  sck_authorization:
+    build:
+      context: ./sck_authorization_ms
+      dockerfile: dockerfile.prod
+    image: sck_authorization_prod
+    environment:
+      - PORT=3003
+      - DATABASE_URL=postgresql://postgres:123456@nats-server:5432/dataValidationDB?schema=public
+      - SCK_NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=${SCK_AUTH_DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+
+  sck_gateway:
+    build:
+      context: ./sck_gateway
+      dockerfile: dockerfile.prod
+    image: sck_gateway_prod
+    ports:
+      - ${SCK_GATEWAY_PORT}:${SCK_GATEWAY_PORT}
+    environment:
+      - PORT=${SCK_GATEWAY_PORT}
+      - SCK_NATS_SERVERS=nats://nats-server:4222
+
+  sck_data_ingestion:
+    build:
+      context: ./sck_data-ingestion_ms
+      dockerfile: dockerfile.prod
+    image: sck_data_ingestion_prod
+    environment:
+      - PORT=3001
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=file:./dev.db
+
+  sck_data_validation:
+    build:
+      context: ./sck_data_validation_ms
+      dockerfile: dockerfile.prod
+      args:
+        - DATA_VALIDATION_DATABASE_URL=${DATA_VALIDATION_DATABASE_URL}
+    image: sck_data_validation_prod
+    environment:
+      - PORT=3002
+      - DATABASE_URL=${DATA_VALIDATION_DATABASE_URL}
+      - SCK_NATS_SERVERS=nats://nats-server:4222
+
+  # sck_data_validation_db:
+  #   container_name: data_validation_database
+  #   image: postgres:16.2
+  #   restart: always
+  #   volumes:
+  #     - ./sck_data_validation_ms/postgres:/var/lib/postgresql/data
+  #   ports:
+  #     - 5432:5432
+  #   environment:
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=123456
+  #     - POSTGRES_DB=dataValidationDB
